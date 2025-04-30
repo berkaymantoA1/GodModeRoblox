@@ -1,77 +1,77 @@
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/Exunys/Orion/main/Source.lua'))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "BerkHub - Universal God Mode",
-   LoadingTitle = "Loading...",
-   LoadingSubtitle = "by Berk7Hack",
-   ConfigurationSaving = {
-      Enabled = false,
-   },
-   KeySystem = true,
-   KeySettings = {
-      Title = "BerkHub Key System",
-      Subtitle = "Enter your key",
-      Note = "Key: BerkHubBlox",
-      SaveKey = false,
-      GrabKeyFromSite = false,
-      Key = "BerkHubBlox"
-   }
+local Window = OrionLib:MakeWindow({
+    Name = "Game Menu",
+    HidePremium = false,
+    SaveConfig = true,
 })
 
-local GodModeTab = Window:CreateTab("God Mode", 4483362458)
+-- God Mode Butonu (Open/Close)
+local godModeEnabled = false
 
-local clone
-
-GodModeTab:CreateButton({
-   Name = "God Mode Open",
-   Callback = function()
-       local player = game.Players.LocalPlayer
-       local char = player.Character
-       if not char then return end
-
-       char.Archivable = true
-       clone = char:Clone()
-       clone.Parent = workspace
-       player.Character = clone
-       task.wait(0.5)
-       char:Destroy()
-
-       Rayfield:Notify({
-           Title = "God Mode",
-           Content = "God Mode is now active. (Clone method)",
-           Duration = 4,
-           Actions = {
-               OK = { Name = "OK", Callback = function() end }
-           },
-       })
-   end,
+local Tab = Window:MakeTab({
+    Name = "Game Modes",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false,
 })
 
-GodModeTab:CreateButton({
-   Name = "God Mode Close",
-   Callback = function()
-       local player = game.Players.LocalPlayer
-       if clone then
-           player.Character = clone
-           clone:Destroy()
-           clone = nil
-           Rayfield:Notify({
-               Title = "God Mode",
-               Content = "God Mode disabled. Character reset.",
-               Duration = 4,
-               Actions = {
-                   OK = { Name = "OK", Callback = function() end }
-               },
-           })
-       else
-           Rayfield:Notify({
-               Title = "God Mode",
-               Content = "Please activate God Mode first.",
-               Duration = 4,
-               Actions = {
-                   OK = { Name = "OK", Callback = function() end }
-               },
-           })
-       end
-   end,
+Tab:AddButton({
+    Name = "Toggle God Mode",  -- Buton adı
+    Callback = function()
+        godModeEnabled = not godModeEnabled  -- Durum değiştirme
+        if godModeEnabled then
+            -- God Mode aktif: Sağlık koruma
+            game.Players.LocalPlayer.Character.Humanoid.Health = game.Players.LocalPlayer.Character.Humanoid.Health
+            game.Players.LocalPlayer.Character.Humanoid.HealthChanged:Connect(function()
+                if godModeEnabled then
+                    game.Players.LocalPlayer.Character.Humanoid.Health = game.Players.LocalPlayer.Character.Humanoid.Health
+                end
+            end)
+            print("God Mode Activated!")  -- Konsola bilgi yazdırma
+        else
+            -- God Mode devre dışı: Normal sağlık
+            print("God Mode Deactivated!")  -- Konsola bilgi yazdırma
+        end
+    end,
+})
+
+-- Profil Bilgileri Sekmesi
+local player = game.Players.LocalPlayer
+local profileImageUrl = "https://www.roblox.com/bust-thumbnail/image?userId=" .. player.UserId .. "&width=150&height=150&format=png"
+
+local ProfileTab = Window:MakeTab({
+    Name = "Profile",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false,
+})
+
+ProfileTab:AddImage({
+    Name = "Profile Image",
+    Image = profileImageUrl,
+    Size = UDim2.new(0, 150, 0, 150),
+    Position = UDim2.new(0, 10, 0, 10),
+})
+
+ProfileTab:AddLabel({
+    Name = "Player Name",
+    Text = "Name: " .. player.Name,
+    TextSize = 18,
+    TextColor = Color3.fromRGB(255, 255, 255),
+    Position = UDim2.new(0, 170, 0, 20),
+})
+
+ProfileTab:AddLabel({
+    Name = "Player ID",
+    Text = "ID: " .. player.UserId,
+    TextSize = 14,
+    TextColor = Color3.fromRGB(255, 255, 255),
+    Position = UDim2.new(0, 170, 0, 50),
+})
+
+-- X Butonu ile Pencereyi Kapatma
+Tab:AddButton({
+    Name = "Close Window (X)",
+    Callback = function()
+        Window:Destroy() -- Pencereyi kapat
+    end,
 })
