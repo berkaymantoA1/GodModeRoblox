@@ -1,0 +1,86 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "BerkHub - MM2 God Mode",
+   LoadingTitle = "Activating...",
+   LoadingSubtitle = "by Berk7Hack",
+   ConfigurationSaving = {
+      Enabled = false,
+   },
+   KeySystem = true,
+   KeySettings = {
+      Title = "BerkHub Key System",
+      Subtitle = "Enter your key",
+      Note = "Key: BerkHubBlox",
+      SaveKey = false,
+      GrabKeyFromSite = false,
+      Key = "BerkHubBlox"
+   }
+})
+
+local GodModeTab = Window:CreateTab("God Mode", 4483362458)
+
+local clone
+
+GodModeTab:CreateButton({
+   Name = "God Mode Open",
+   Callback = function()
+       local player = game.Players.LocalPlayer
+       local char = player.Character
+       if not char then return end
+
+       char.Archivable = true
+       clone = char:Clone()
+       clone.Parent = workspace
+       player.Character = clone
+       task.wait(0.5)
+       char:Destroy()
+
+       Rayfield:Notify({
+           Title = "God Mode",
+           Content = "God Mode is now active.",
+           Duration = 4,
+           Actions = {
+               OK = {
+                   Name = "OK",
+                   Callback = function() end
+               },
+           },
+       })
+   end,
+})
+
+GodModeTab:CreateButton({
+   Name = "God Mode Close",
+   Callback = function()
+       local player = game.Players.LocalPlayer
+       if clone then
+           player.Character = clone
+           clone:Destroy()
+           clone = nil
+           Rayfield:Notify({
+               Title = "God Mode",
+               Content = "God Mode deactivated.",
+               Duration = 4,
+               Actions = {
+                   OK = {
+                       Name = "OK",
+                       Callback = function() end
+                   },
+               },
+           })
+       else
+           Rayfield:Notify({
+               Title = "God Mode",
+               Content = "You must activate it first.",
+               Duration = 4,
+               Actions = {
+                   OK = {
+                       Name = "OK",
+                       Callback = function() end
+                   },
+               },
+           })
+       end
+   end,
+})
